@@ -23,7 +23,7 @@ for j=1:nboot
     switch regression
         case 'robust'   % robust regression
             [B, stats] = robustfit(dadT_mod(ib, randsample(nboot_obs, 1)), ECS(ib));
-            %[B, stats] = robustfit(mean_model_obs(ib), ECS(ib));
+            %[B, stats] = robustfit(mean_dadT_mod(ib), ECS(ib));
             sigma      = stats.s;
         case 'ols'      % ordinary least squares
             [B, BINT, R, RINT, STATS] = regress(ECS(ib), [ones(nmodels, 1) mean_dadT_mod(ib)]);
@@ -31,8 +31,8 @@ for j=1:nboot
     end
     
     % predicted ECS (with normal errors)
-    ECSboot(j) = B(1)+B(2)*dadT_obs(1, randsample(nboot_obs, 1)) + sigma*randn(1);
-    %ECSboot(j) = B(1)+B(2)*mean_dadT_obs + sigma*randn(1);  % prediction from mean obs
+    %ECSboot(j) = B(1)+B(2)*dadT_obs(1, randsample(nboot_obs, 1)) + sigma*randn(1);
+    ECSboot(j) = B(1)+B(2)*mean_dadT_obs + sigma*randn(1);  % prediction from mean obs
 end
 ECSboot    = sort(ECSboot);
 
@@ -45,5 +45,5 @@ ECS_med    = median(ECSboot);
 conf_int   = .66;
 [ECSboot(round((1-conf_int)/2*nboot)), ECS_med, ECSboot(round((1+conf_int)/2*nboot))]
 
-max(find(ECSboot<2.61))/nboot
+%max(find(ECSboot<2.61))/nboot
 
